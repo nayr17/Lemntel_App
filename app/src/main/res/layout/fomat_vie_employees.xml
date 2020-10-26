@@ -5,8 +5,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     app:cardCornerRadius="12dp"
-    android:layout_margin="5dp">
-
+    android:elevation="5dp"
+    android:layout_margin="5dp"
+    android:id="@+id/cardView">
 
     <LinearLayout
         android:padding="10dp"
@@ -18,7 +19,7 @@
             android:layout_height="match_parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/employeePhoto_Attendance"
+                android:id="@+id/employeePhoto"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 app:civ_border_width="2dp"
@@ -27,14 +28,14 @@
                 android:src="@drawable/ic_baseline_person_24"/>
 
             <TextView
-                android:id="@+id/employeeID_Attendance"
+                android:id="@+id/employeeID"
                 android:layout_margin="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="20200302"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/employeePhoto_Attendance"/>
+                android:layout_below="@id/employeePhoto"/>
 
         </RelativeLayout>
 
@@ -44,35 +45,26 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/Name_Attendance"
+                android:id="@+id/Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="Name:"
-                android:layout_margin="5dp"/>
+                android:text="Name: "
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="15dp"/>
 
-            <TextView
-                android:id="@+id/Date_Attendance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:text="Date:"
-                android:layout_margin="5dp"
-                android:layout_below="@+id/Name_Attendance"/>
-
-            <TextView
-                android:id="@+id/Time_Attendance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:text="Time:"
-                android:layout_margin="5dp"
-                android:layout_below="@+id/Date_Attendance"/>
 
 
         </RelativeLayout>
 
     </LinearLayout>
+
+
+
+
+
+
 
 
 </androidx.cardview.widget.CardView>

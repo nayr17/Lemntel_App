@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.lemntelattendancechecker.HelperClass.CreateAccountHelperClass;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,12 +25,10 @@ import com.google.firebase.database.ValueEventListener;
 
 public class CreateAccountAdmin extends AppCompatActivity {
 
-    EditText username;
     EditText email;
     EditText password;
     EditText ConfirmPass;
 
-    private String getUsername;
     private String getEmail;
     private String getPassword;
     private String getConfirmppass;
@@ -41,7 +40,6 @@ public class CreateAccountAdmin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account_admin);
 
-        username = findViewById(R.id.username);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         ConfirmPass = findViewById(R.id.ConfirmPassword);
@@ -77,65 +75,44 @@ public class CreateAccountAdmin extends AppCompatActivity {
 
 
     public void btnCreate(View view) {
-        getUsername = username.getText().toString().trim();
         getEmail = email.getText().toString().trim();
         getPassword = password.getText().toString().trim();
-        getConfirmppass = ConfirmPass.getText().toString().trim();
+        getConfirmppass = ConfirmPass.getText().toString();
 
-        if(TextUtils.isEmpty(getUsername)){
-            username.setError("enter username");
-            return;
-        }
         if(TextUtils.isEmpty(getEmail)){
-            email.setError("enter username");
+            email.setError("enter email");
             return;
         }validateEmailAddress(email);
         if(TextUtils.isEmpty(getPassword)){
-            password.setError("enter username");
+            password.setError("enter password");
             return;
         }checkPasswordChar(password);
         if(TextUtils.isEmpty(getConfirmppass)){
-            ConfirmPass.setError("enter username");
+            ConfirmPass.setError("enter password");
             return;
         }checkConfirmPasswordChar(ConfirmPass);
         if(!getPassword.equals(getConfirmppass)){
             Toast.makeText(this, "password does not match", Toast.LENGTH_SHORT).show();
         }
-        if(getPassword.equals(getConfirmppass) && !getPassword.equals(null) && !getConfirmppass.equals(null)){
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Admin");
-            userRef.orderByChild("username")
-                    .equalTo(getUsername)
-                    .addValueEventListener(new ValueEventListener() {
+        if(getPassword.equals(getConfirmppass) && !getPassword.equals(null) && !getConfirmppass.equals(null))
+        {
+            FirebaseAuth firebaseAuth =FirebaseAuth.getInstance();
+            firebaseAuth.createUserWithEmailAndPassword(getEmail,getPassword)
+                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists()){
-                                username.setError("pick another username");
-                            }
-                            else {
-                                firebaseAuth.createUserWithEmailAndPassword(getEmail,getPassword)
-                                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                                                DatabaseReference getUserRef = firebaseDatabase.getReference("Admin");
-                                                CreateAccountHelperClass helperClass = new CreateAccountHelperClass(getUsername,getEmail,getPassword);
-                                                getUserRef.child(getUsername).setValue(helperClass);
-
-                                                Intent i = new Intent(CreateAccountAdmin.this, MainActivity.class);
-                                                startActivity(i);
-                                                finish();
-                                            }
-                                        });
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        public void onSuccess(AuthResult authResult) {
+                            Intent i = new Intent(CreateAccountAdmin.this, MainMainActivity.class);
+                            startActivity(i);
+                            finish();
 
                         }
                     });
+
         }
 
-    }
+
+
+        }
+
 
 }

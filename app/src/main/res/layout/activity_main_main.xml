@@ -9,11 +9,11 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:src="@drawable/logo200x200"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"/>
+        android:layout_marginTop="80dp"/>
 
     <TextView
         android:id="@+id/appname"
@@ -89,7 +89,7 @@
                 android:layout_height="80dp"
                 android:layout_margin="2dp"
                 android:layout_centerHorizontal="true"
-                android:onClick="btnCheckAttendance"
+                android:onClick="btnScanAttendance"
                 android:src="@drawable/ic_baseline_check_24"/>
 
             <TextView
@@ -170,14 +170,15 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_baseline_face_24"/>
+                android:src="@drawable/ic_baseline_face_24"
+                android:onClick="btnViewEmployees"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/AddPhoto"
                 android:layout_margin="2dp"
-                android:text="Add Photo"
+                android:text="View Employees"
                 android:textStyle="bold"
                 android:layout_centerInParent="true"
                 android:textSize="10sp"/>
@@ -193,7 +194,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_baseline_pageview_24"/>
+                android:src="@drawable/ic_baseline_pageview_24"
+                android:onClick="btnViewAttendance"/>
 
             <TextView
                 android:layout_width="wrap_content"

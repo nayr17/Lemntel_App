@@ -4,25 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ViewAttendance">
-
+    tools:context=".ViewEmployees">
+    
     <TextView
-        android:id="@+id/labelAttendance"
+        android:id="@+id/labelEmployees"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Employee Attendance"
-        android:textStyle="bold"
-        android:textColor="#df7227"
+        android:text="Employees"
         android:textSize="30sp"
+        android:textStyle="bold"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="20dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycleViewAttendance"
-        android:layout_margin="5dp"
-        android:layout_below="@id/labelAttendance"
+        android:id="@+id/recycleViewEmployees"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="match_parent"
+        android:layout_below="@id/labelEmployees"
+        android:padding="10dp"/>
 
 </RelativeLayout>

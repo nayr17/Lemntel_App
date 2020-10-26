@@ -1,24 +1,15 @@
 package com.example.lemntelattendancechecker.HelperClass;
 
 public class CreateAccountHelperClass {
-    String username, email , password;
+    String email , password;
 
     public CreateAccountHelperClass() {
 
     }
 
-    public CreateAccountHelperClass(String username, String email, String password) {
-        this.username = username;
+    public CreateAccountHelperClass(String email, String password) {
         this.email = email;
         this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String name) {
-        this.username = name;
     }
 
     public String getEmail() {

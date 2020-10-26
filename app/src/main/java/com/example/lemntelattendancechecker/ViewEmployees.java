@@ -1,43 +1,45 @@
 package com.example.lemntelattendancechecker;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lemntelattendancechecker.HelperClass.Model;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Display;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.lemntelattendancechecker.HelperClass.Adapter;
-import com.example.lemntelattendancechecker.HelperClass.Model;
-import com.example.lemntelattendancechecker.HelperClass.ScanActivityGetResult;
-import com.example.lemntelattendancechecker.HelperClass.ViewAttendanceAdpater;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class ViewAttendance extends AppCompatActivity
-{
+public class ViewEmployees extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    ViewAttendanceAdpater adapter;
+    Adapter adapter;
     String Username;
     FirebaseAuth firebaseAuth;
+    CardView cardView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_attendance);
-
+        setContentView(R.layout.activity_view_employees);
         firebaseAuth = FirebaseAuth.getInstance();
 
-        recyclerView = findViewById(R.id.recycleViewAttendance);
+        recyclerView = findViewById(R.id.recycleViewEmployees);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        FirebaseRecyclerOptions<ScanActivityGetResult> options = new FirebaseRecyclerOptions.Builder<ScanActivityGetResult>()
-                .setQuery(FirebaseDatabase.getInstance().getReference("Employee_Attendance"),ScanActivityGetResult.class)
+        FirebaseRecyclerOptions<Model> options = new FirebaseRecyclerOptions.Builder<Model>()
+                .setQuery(FirebaseDatabase.getInstance().getReference("Employees"),Model.class)
                 .build();
 
-        adapter = new ViewAttendanceAdpater(options);
+        adapter = new Adapter(options);
         recyclerView.setAdapter(adapter);
 
     }
@@ -55,4 +57,5 @@ public class ViewAttendance extends AppCompatActivity
         super.onStop();
         adapter.stopListening();
     }
+
 }

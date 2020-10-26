@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,10 +23,10 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText username;
+    EditText email;
     EditText password;
 
-    private String getUsername;
+    private String getEmail;
     private String getPassword;
 
 
@@ -40,92 +41,45 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        username = findViewById(R.id.username);
+        email = findViewById(R.id.email);
         password = findViewById(R.id.password);
 
 
     }
 
-    public void linkCreateAccount(View view) {
+    public void linkCreateAccount(View view)
+    {
         Intent i = new Intent(MainActivity.this, CreateAccountAdmin.class);
         startActivity(i);
         finish();
     }
 
-    public void btnLogin(View view) {
-        getUsername = username.getText().toString().trim();
+    public void btnLogin(View view)
+    {
+        getEmail = email.getText().toString().trim();
         getPassword = password.getText().toString().trim();
 
-        if(TextUtils.isEmpty(getUsername)){
-            username.setError("enter username");
+        if (TextUtils.isEmpty(getEmail)) {
+            email.setError("enter username");
             return;
         }
-        if(TextUtils.isEmpty(getPassword)){
+        if (TextUtils.isEmpty(getPassword)) {
             password.setError("enter password");
             return;
         }
-
-        final DatabaseReference loginRef = FirebaseDatabase.getInstance().getReference("Admin");
-        loginRef.orderByChild("username").equalTo(getUsername)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists()){
-                            loginRef.orderByValue().equalTo(getPassword)
-                                    .addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            if(dataSnapshot.exists()){
-                                                DatabaseReference emailRef = FirebaseDatabase.getInstance().getReference("Admin/" + getUsername + "/email");
-                                                emailRef.addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                        if(dataSnapshot.exists()){
-                                                            String getEmail = dataSnapshot.getValue().toString().trim();
-                                                            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                                                            firebaseAuth.signInWithEmailAndPassword(getEmail,getPassword)
-                                                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                                                    if(task.isSuccessful()){
-                                                                        Intent i = new Intent(MainActivity.this, MainMainActivity.class);
-                                                                        i.putExtra("username", getUsername);
-                                                                        startActivity(i);
-                                                                        finish();
-                                                                    }
-
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                    }
-                                                });
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                        }
-                                    });
+        if(getEmail.length() != 0 && getPassword.length() != 0)
+        {
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            firebaseAuth.signInWithEmailAndPassword(getEmail, getPassword)
+                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+                            Intent i = new Intent(MainActivity.this, MainMainActivity.class);
+                            startActivity(i);
                         }
-                        else {
-                            Toast.makeText(MainActivity.this,"User not found!", Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
+                    });
+        }
     }
-
 
 
 }
