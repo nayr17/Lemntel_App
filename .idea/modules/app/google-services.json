@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "384667235923",
+    "firebase_url": "https://lemntelattendancechecker.firebaseio.com",
+    "project_id": "lemntelattendancechecker",
+    "storage_bucket": "lemntelattendancechecker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384667235923:android:f6f150a61d4f98c42938a6",
+        "android_client_info": {
+          "package_name": "com.example.lemntelattendancechecker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "384667235923-pr51vj24pechaemjgn0fd9k2999fv7u9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lemntelattendancechecker",
+            "certificate_hash": "3ab9750e11c8623c787116fac9d6bf031f1ea927"
+          }
+        },
+        {
+          "client_id": "384667235923-e9q3q1t8b8n6e0r94754itkegii4nkd9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgjSAXnLL1d1nAMa0NHEIRxC_vtzxGeVw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "384667235923-e9q3q1t8b8n6e0r94754itkegii4nkd9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

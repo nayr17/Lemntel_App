@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddPhoto">
+
+    <TextView
+        android:id="@+id/labelAddphoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="50dp"
+        android:gravity="center"
+        android:text="Add Photo for Employee"
+        android:textColor="#df7227"
+        android:textSize="30sp"
+        android:textStyle="bold"/>
+
+    <ImageView
+        android:id="@+id/selectedImage"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_below="@+id/labelAddphoto"
+        android:layout_marginTop="-25dp" />
+
+    <TextView
+        android:layout_centerHorizontal="true"
+        android:id="@+id/labelEmployeeSelection"
+        android:layout_below="@id/selectedImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="select employee to add photo"/>
+
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_centerHorizontal="true"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_below="@id/labelEmployeeSelection"/>
+
+
+    <Button
+        android:id="@+id/btnSelectImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinner"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="2dp"
+        android:text="select image" />
+
+    <Button
+        android:id="@+id/btnUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnSelectImage"
+        android:layout_centerHorizontal="true"
+        android:text="Upload" />
+
+
+</RelativeLayout>
