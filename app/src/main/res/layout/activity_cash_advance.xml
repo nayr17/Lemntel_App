@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CashAdvance">
+
+    <TextView
+        android:id="@+id/labelC.A."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="40dp"
+        android:textColor="#df7227"
+        android:textStyle="bold"
+        android:text="Cash Advance"
+        android:textSize="30dp" />
+
+
+    <LinearLayout
+        android:id="@+id/linear1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/labelC.A."
+        android:layout_centerHorizontal="true">
+
+
+        <EditText
+            android:id="@+id/scanID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Scan ID" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_baseline_search_24"
+            android:onClick="btnScanCA"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linear1"
+        android:layout_centerHorizontal="true">
+
+<!--        <TextView-->
+<!--            android:id="@+id/labelEmployee"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:text="Employee"-->
+<!--            android:textSize="20dp"-->
+<!--            android:textStyle="bold" />-->
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userPhoto"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            app:civ_border_color="#df7227"
+            app:civ_border_width="3dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_baseline_person_24"
+            android:layout_marginTop="30dp"/>
+
+        <TextView
+            android:id="@+id/employeeName"
+            android:layout_below="@+id/userPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="Name:"
+            android:textColor="#000"
+            android:layout_margin="5dp"
+            android:layout_centerHorizontal="true"/>
+
+        <EditText
+            android:id="@+id/editTextAmount"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/employeeName"
+            android:hint="enter amount"
+            android:ems="10"
+            android:gravity="center"
+            android:background="@drawable/edit_text_border"
+            android:layout_centerHorizontal="true"/>
+
+        <Button
+            android:id="@+id/saveCA"
+            android:layout_below="@id/editTextAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_centerHorizontal="true"
+            android:text="save"
+            android:onClick="saveCA"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -50,8 +50,9 @@ public class MainActivity extends AppCompatActivity {
     public void linkCreateAccount(View view)
     {
         Intent i = new Intent(MainActivity.this, CreateAccountAdmin.class);
-        startActivity(i);
         finish();
+        startActivity(i);
+
     }
 
     public void btnLogin(View view)

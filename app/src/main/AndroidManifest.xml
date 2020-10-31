@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.Light.NoActionBar">
-        <activity android:name=".ViewEmployees"></activity>
+        <activity android:name=".CashAdvance"></activity>
+        <activity android:name=".ViewEmployees" />
         <activity android:name=".ViewAttendance" />
         <activity android:name=".AddEmployee" />
         <activity android:name=".MainMainActivity" />

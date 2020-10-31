@@ -59,7 +59,8 @@ public class MainMainActivity extends AppCompatActivity {
 
     public void btnLogout(View view) {
         firebaseAuth.signOut();
-        Intent i = new Intent(MainMainActivity.this, MainMainActivity.class);
+        Intent i = new Intent(MainMainActivity.this, MainActivity.class);
+        finish();
         startActivity(i);
     }
 
@@ -162,6 +163,11 @@ public class MainMainActivity extends AppCompatActivity {
 
     public void btnViewAttendance(View view) {
         Intent i = new Intent(MainMainActivity.this, ViewAttendance.class);
+        startActivity(i);
+    }
+
+    public void btnCA(View view) {
+        Intent i = new Intent(MainMainActivity.this, CashAdvance.class);
         startActivity(i);
     }
 }
