@@ -221,7 +221,7 @@
                 android:layout_height="80dp"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/ic_baseline_list_24"
-                android:onClick="btnViewAttendance"/>
+                android:onClick="btnViewCA"/>
 
             <TextView
                 android:layout_width="wrap_content"

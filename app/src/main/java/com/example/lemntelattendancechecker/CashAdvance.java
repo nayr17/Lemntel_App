@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,6 +48,9 @@ public class CashAdvance extends AppCompatActivity {
 
     String scannedResult;
     String currentAdmin;
+
+    String getBalance;
+    String bal;
 
 
     @Override
@@ -121,6 +125,7 @@ public class CashAdvance extends AppCompatActivity {
                                     {
                                         if(snapshot.child("balance").getValue() != null )
                                         {
+                                            bal = snapshot.child("balance").getValue().toString();
                                             balance.setText("Balance: " + snapshot.child("balance").getValue().toString());
                                             balance.setVisibility(View.VISIBLE);
 
@@ -166,6 +171,7 @@ public class CashAdvance extends AppCompatActivity {
 
 
     public void saveCA(View view) {
+
         Date today = new Date();
         SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
         final String date = format.format(today);
@@ -173,73 +179,145 @@ public class CashAdvance extends AppCompatActivity {
         Date today1 = new Date();
         SimpleDateFormat format1 = new SimpleDateFormat("EEEE");
         String addformat = format1.format(today1);
-
         final String final_date = date + " (" + addformat + ")";
-        DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + scannedResult);
-        getRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists())
-                {
-                    String name = snapshot.child("name").getValue().toString().trim();
-                    String photoUrl = snapshot.child("photoUrl").getValue().toString().trim();
-                    String CA_Amount = amount.getText().toString().trim();
-                    DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Cash_Advance");
-                    CAhelper cAhelper = new CAhelper(scannedResult, name, photoUrl, CA_Amount, final_date);
-                    uploadRef.child(scannedResult).child(final_date).setValue(cAhelper)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(CashAdvance.this, "Cash advance save!", Toast.LENGTH_SHORT).show();
 
-                                    final DatabaseReference uploadBalance = FirebaseDatabase.getInstance().getReference("Employee_Balance/" + scannedResult);
-                                    uploadBalance.addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            if(snapshot.exists())
-                                            {
-                                                int previousBalance = Integer.parseInt(snapshot.child("balance").getValue().toString());
-                                                int newBalance = Integer.parseInt(amount.getText().toString());
-                                                previousBalance = previousBalance + newBalance;
-                                                String finalBalance = String.valueOf(previousBalance);
-                                                CAbalanceHelper cAbalanceHelper = new CAbalanceHelper(finalBalance);
-                                                uploadBalance.setValue(cAbalanceHelper);
+        if(TextUtils.isEmpty(amount.getText().toString()))
+        {
+            amount.setError("field cannot be empty");
+            return;
+        }
+        if(bal != null && amount.length() != 0)
+        {
+            int previousBalance = Integer.parseInt(bal);
+            int newBalance = Integer.parseInt(amount.getText().toString());
+            int add = previousBalance + newBalance;
+            getBalance = Integer.toString(add);
+
+            DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + scannedResult);
+            getRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists())
+                    {
+                       final String name = snapshot.child("name").getValue().toString().trim();
+                       final String photoUrl = snapshot.child("photoUrl").getValue().toString().trim();
+                        final String CA_Amount = amount.getText().toString().trim();
+                        DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Cash_Advance");
+                        CAhelper cAhelper = new CAhelper(scannedResult, name, photoUrl, CA_Amount, final_date);
+                        uploadRef.child(scannedResult).push().setValue(cAhelper)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+
+                                        final DatabaseReference upload = FirebaseDatabase.getInstance().getReference("Employee_Balance/" + scannedResult);
+                                        upload.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                if(snapshot.exists())
+                                                {
+                                                    CAbalanceHelper helper = new CAbalanceHelper(getBalance,name,scannedResult,photoUrl);
+                                                    upload.setValue(helper)
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Intent i = new Intent(CashAdvance.this, MainMainActivity.class);
+                                                                    finish();
+                                                                    Toast.makeText(CashAdvance.this, "Cash advance save!", Toast.LENGTH_SHORT).show();
+                                                                    startActivity(i);
+                                                                }
+                                                            });
+                                                }
                                             }
-                                            else
-                                            {
-                                                String balance = amount.getText().toString();
-                                                CAbalanceHelper cAbalanceHelper = new CAbalanceHelper(balance);
-                                                uploadBalance.setValue(cAbalanceHelper);
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
                                             }
-                                        }
+                                        });
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
 
-                                        }
-                                    });
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(CashAdvance.this, "error", Toast.LENGTH_SHORT).show();
+                                Intent i = getIntent();
+                                finish();
+                                startActivity(i);
+                            }
+                        });
 
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(CashAdvance.this, "error", Toast.LENGTH_SHORT).show();
-                            Intent i = getIntent();
-                            finish();
-                            startActivity(i);
-                        }
-                    });
 
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
                 }
-            }
+            });
+        }
+        if(bal == null && amount.length() != 0)
+        {
+            int newBalance = Integer.parseInt(amount.getText().toString());
+            getBalance = Integer.toString(newBalance);
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + scannedResult);
+            getRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists())
+                    {
+                        final String name = snapshot.child("name").getValue().toString().trim();
+                        final String photoUrl = snapshot.child("photoUrl").getValue().toString().trim();
+                        final String CA_Amount = amount.getText().toString().trim();
+                        DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Cash_Advance");
+                        CAhelper cAhelper = new CAhelper(scannedResult, name, photoUrl, CA_Amount, final_date);
+                        uploadRef.child(scannedResult).push().setValue(cAhelper)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
 
-            }
-        });
+                                        DatabaseReference upload = FirebaseDatabase.getInstance().getReference("Employee_Balance/" + scannedResult);
+                                        CAbalanceHelper helper = new CAbalanceHelper(getBalance, name, scannedResult, photoUrl);
+                                        upload.setValue(helper).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Intent i = new Intent(CashAdvance.this, MainMainActivity.class);
+                                                finish();
+                                                Toast.makeText(CashAdvance.this, "Cash advance save!", Toast.LENGTH_SHORT).show();
+                                                startActivity(i);
+                                            }
+                                        });
+
+
+
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(CashAdvance.this, "error", Toast.LENGTH_SHORT).show();
+                                Intent i = getIntent();
+                                finish();
+                                startActivity(i);
+                            }
+                        });
+
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+        }
+
 
     }
+
+
 
 }

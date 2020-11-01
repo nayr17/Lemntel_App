@@ -170,4 +170,9 @@ public class MainMainActivity extends AppCompatActivity {
         Intent i = new Intent(MainMainActivity.this, CashAdvance.class);
         startActivity(i);
     }
+
+    public void btnViewCA(View view) {
+        Intent i = new Intent(MainMainActivity.this, ViewCashAdvance.class);
+        startActivity(i);
+    }
 }

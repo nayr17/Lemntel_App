@@ -1,44 +1,42 @@
 package com.example.lemntelattendancechecker;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.lemntelattendancechecker.HelperClass.Model;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.Display;
-import android.view.View;
-import android.widget.Toast;
 
 import com.example.lemntelattendancechecker.HelperClass.Adapter;
+import com.example.lemntelattendancechecker.HelperClass.CAbalanceHelper;
+import com.example.lemntelattendancechecker.HelperClass.Model;
+import com.example.lemntelattendancechecker.HelperClass.ViewCAadapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class ViewEmployees extends AppCompatActivity {
+public class ViewCashAdvance extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    Adapter adapter;
+    ViewCAadapter adapter;
     FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_employees);
+        setContentView(R.layout.activity_view_cash_advance);
+
         firebaseAuth = FirebaseAuth.getInstance();
 
-        recyclerView = findViewById(R.id.recycleViewEmployees);
+        recyclerView = findViewById(R.id.CArecycleView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        FirebaseRecyclerOptions<Model> options = new FirebaseRecyclerOptions.Builder<Model>()
-                .setQuery(FirebaseDatabase.getInstance().getReference("Employees"),Model.class)
+        FirebaseRecyclerOptions<CAbalanceHelper> options = new FirebaseRecyclerOptions.Builder<CAbalanceHelper>()
+                .setQuery(FirebaseDatabase.getInstance().getReference("Employee_Balance"),CAbalanceHelper.class)
                 .build();
 
-        adapter = new Adapter(options);
+        adapter = new ViewCAadapter(options);
         recyclerView.setAdapter(adapter);
+
 
     }
 
@@ -55,5 +53,4 @@ public class ViewEmployees extends AppCompatActivity {
         super.onStop();
         adapter.stopListening();
     }
-
 }
