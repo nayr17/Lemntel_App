@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.lemntelattendancechecker.HelperClass.CAbalanceHelper;
 import com.example.lemntelattendancechecker.HelperClass.CAhelper;
 import com.example.lemntelattendancechecker.HelperClass.ScanActivityGetResult;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,6 +41,7 @@ public class CashAdvance extends AppCompatActivity {
     TextView name;
     CircleImageView photo;
     Button save;
+    TextView balance;
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
@@ -58,11 +60,13 @@ public class CashAdvance extends AppCompatActivity {
         amount = findViewById(R.id.editTextAmount);
         photo = findViewById(R.id.userPhoto);
         save = findViewById(R.id.saveCA);
+        balance = findViewById(R.id.balance);
 
         name.setVisibility(View.INVISIBLE);
         amount.setVisibility(View.INVISIBLE);
         photo.setVisibility(View.INVISIBLE);
         save.setVisibility(View.INVISIBLE);
+        balance.setVisibility(View.INVISIBLE);
 
 
     }
@@ -97,6 +101,7 @@ public class CashAdvance extends AppCompatActivity {
                 photo.setVisibility(View.VISIBLE);
                 save.setVisibility(View.VISIBLE);
 
+
                 DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + scannedResult);
                 getRef.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -107,6 +112,28 @@ public class CashAdvance extends AppCompatActivity {
                             name.setText(snapshot.child("name").getValue().toString());
                             Picasso.get().load(snapshot.child("photoUrl").getValue().toString())
                                     .into(photo);
+
+                            DatabaseReference getCAref = FirebaseDatabase.getInstance().getReference("Employee_Balance/" + scannedResult);
+                            getCAref.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if(snapshot.exists())
+                                    {
+                                        if(snapshot.child("balance").getValue() != null )
+                                        {
+                                            balance.setText("Balance: " + snapshot.child("balance").getValue().toString());
+                                            balance.setVisibility(View.VISIBLE);
+
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
                         }
                         else
                         {
@@ -157,18 +184,40 @@ public class CashAdvance extends AppCompatActivity {
                     String name = snapshot.child("name").getValue().toString().trim();
                     String photoUrl = snapshot.child("photoUrl").getValue().toString().trim();
                     String CA_Amount = amount.getText().toString().trim();
-
                     DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Cash_Advance");
                     CAhelper cAhelper = new CAhelper(scannedResult, name, photoUrl, CA_Amount, final_date);
-                    uploadRef.push().setValue(cAhelper)
+                    uploadRef.child(scannedResult).child(final_date).setValue(cAhelper)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Toast.makeText(CashAdvance.this, "Cash advance save!", Toast.LENGTH_SHORT).show();
 
-                                    Intent i = new Intent(CashAdvance.this, MainMainActivity.class);
-                                    finish();
-                                    startActivity(i);
+                                    final DatabaseReference uploadBalance = FirebaseDatabase.getInstance().getReference("Employee_Balance/" + scannedResult);
+                                    uploadBalance.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if(snapshot.exists())
+                                            {
+                                                int previousBalance = Integer.parseInt(snapshot.child("balance").getValue().toString());
+                                                int newBalance = Integer.parseInt(amount.getText().toString());
+                                                previousBalance = previousBalance + newBalance;
+                                                String finalBalance = String.valueOf(previousBalance);
+                                                CAbalanceHelper cAbalanceHelper = new CAbalanceHelper(finalBalance);
+                                                uploadBalance.setValue(cAbalanceHelper);
+                                            }
+                                            else
+                                            {
+                                                String balance = amount.getText().toString();
+                                                CAbalanceHelper cAbalanceHelper = new CAbalanceHelper(balance);
+                                                uploadBalance.setValue(cAbalanceHelper);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
