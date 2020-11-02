@@ -100,11 +100,6 @@ public class CashAdvance extends AppCompatActivity {
                 scannedResult = result.getContents().trim();
                 ID.setVisibility(View.VISIBLE);
                 ID.setText(scannedResult);
-                name.setVisibility(View.VISIBLE);
-                amount.setVisibility(View.VISIBLE);
-                photo.setVisibility(View.VISIBLE);
-                save.setVisibility(View.VISIBLE);
-
 
                 DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + scannedResult);
                 getRef.addValueEventListener(new ValueEventListener() {
@@ -112,6 +107,10 @@ public class CashAdvance extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if(snapshot.exists())
                         {
+                            name.setVisibility(View.VISIBLE);
+                            amount.setVisibility(View.VISIBLE);
+                            photo.setVisibility(View.VISIBLE);
+                            save.setVisibility(View.VISIBLE);
 
                             name.setText(snapshot.child("name").getValue().toString());
                             Picasso.get().load(snapshot.child("photoUrl").getValue().toString())
@@ -123,11 +122,15 @@ public class CashAdvance extends AppCompatActivity {
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     if(snapshot.exists())
                                     {
-                                        if(snapshot.child("balance").getValue() != null )
+                                        String ConvertZero = Integer.toString(0);
+                                        if(snapshot.child("balance").getValue() != null)
                                         {
-                                            bal = snapshot.child("balance").getValue().toString();
-                                            balance.setText("Balance: " + snapshot.child("balance").getValue().toString());
-                                            balance.setVisibility(View.VISIBLE);
+                                            if(!snapshot.child("balance").getValue().equals(ConvertZero))
+                                            {
+                                                bal = snapshot.child("balance").getValue().toString();
+                                                balance.setText("Balance: " + snapshot.child("balance").getValue().toString());
+                                                balance.setVisibility(View.VISIBLE);
+                                            }
 
                                         }
                                     }
