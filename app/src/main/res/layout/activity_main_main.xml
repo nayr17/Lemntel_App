@@ -13,7 +13,7 @@
         android:layout_height="150dp"
         android:src="@drawable/logo200x200"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"/>
+        android:layout_marginTop="50dp"/>
 
     <TextView
         android:id="@+id/appname"
@@ -34,21 +34,33 @@
         android:textStyle="bold"
         android:textColor="#df7227"
         android:layout_margin="5dp"
-        android:text="Admin: "/>
+        android:text="ADMIN: "/>
+
+    <TextView
+        android:id="@+id/dateToday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DATE: "
+        android:layout_below="@id/admin"
+        android:textStyle="bold"
+        android:textColor="#FF0000"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"/>
 
     <Button
         android:id="@+id/logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="logout"
-        android:layout_below="@+id/admin"
+        android:layout_below="@+id/dateToday"
         android:onClick="btnLogout"
+        android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"/>
 
 
     <LinearLayout
         android:id="@+id/linear1"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_below="@+id/logout"
         android:layout_width="wrap_content"
         android:layout_centerHorizontal="true"

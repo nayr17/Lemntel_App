@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 
 import com.example.lemntelattendancechecker.HelperClass.ScanActivityGetResult;
+import com.example.lemntelattendancechecker.HelperClass.childNameHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -25,7 +27,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -33,6 +37,7 @@ import java.util.Locale;
 public class MainMainActivity extends AppCompatActivity {
 
     TextView adminDisplay;
+    TextView date;
     FirebaseAuth firebaseAuth;
     String adminUsername;
 
@@ -49,7 +54,15 @@ public class MainMainActivity extends AppCompatActivity {
         adminDisplay = findViewById(R.id.admin);
         adminDisplay.setText("Admin: " + firebaseAuth.getCurrentUser().getEmail());
         currentAdmin = firebaseAuth.getCurrentUser().getEmail();
+
+        Date TodayChildName = new Date();
+        SimpleDateFormat format2 = new SimpleDateFormat("MMM d yyyy (EEEE)");
+        String dateToday = format2.format(TodayChildName);
+
+        date = findViewById(R.id.dateToday);
+        date.setText("DATE: " + dateToday);
     }
+
 
     public void btnAddEmployee(View view) {
         Intent i = new Intent(MainMainActivity.this, AddEmployee.class);
@@ -108,6 +121,16 @@ public class MainMainActivity extends AppCompatActivity {
 
     public void getRefScan()
     {
+
+
+        Date TodayChildName = new Date();
+        SimpleDateFormat format2 = new SimpleDateFormat("MMM d yyyy (EEEE)");
+        final String childName = format2.format(TodayChildName);
+//        final String ChildName = " ' " + childName + " ' ";
+
+
+//        Toast.makeText(this, childName, Toast.LENGTH_LONG).show();
+
         Date today = new Date();
         SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
         final String date = format.format(today);
@@ -125,13 +148,13 @@ public class MainMainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
-                    String id = snapshot.child("id").getValue().toString().trim();
+                    final String id = snapshot.child("id").getValue().toString().trim();
                     final String name = snapshot.child("name").getValue().toString().trim();
                     String photoUrl = snapshot.child("photoUrl").getValue().toString().trim();
 
-                    DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Employee_Attendance");
+                    final DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Employee_Attendance");
                     ScanActivityGetResult scanActivityGetResult = new ScanActivityGetResult(id, name, photoUrl, final_date, currentTime);
-                    uploadRef.push().setValue(scanActivityGetResult)
+                    uploadRef.child(childName).push().setValue(scanActivityGetResult)
                           .addOnCompleteListener(new OnCompleteListener<Void>() {
                               @Override
                               public void onComplete(@NonNull Task<Void> task) {

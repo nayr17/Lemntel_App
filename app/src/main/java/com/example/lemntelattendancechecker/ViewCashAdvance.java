@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.lemntelattendancechecker.HelperClass.Adapter;
 import com.example.lemntelattendancechecker.HelperClass.CAbalanceHelper;
@@ -32,9 +33,22 @@ public class ViewCashAdvance extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
 
-//        String CovertZero = Integer.toString(0);
-//        DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employee_Balance");
-//        getRef.orderByKey().orderByValue().equalTo(CovertZero).removeEventListener();
+        String CovertZero = Integer.toString(0);
+        final DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employee_Balance");
+        getRef.orderByChild("balance").equalTo(CovertZero).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    getRef.removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
         recyclerView = findViewById(R.id.CArecycleView);
