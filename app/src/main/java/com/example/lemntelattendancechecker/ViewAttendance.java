@@ -30,7 +30,7 @@ public class ViewAttendance extends AppCompatActivity
     List<DateAttendanceHelper> getData;
 
     RecyclerView recyclerView;
-    ViewAttendanceAdpater adapter;
+    ViewDateAttendanceAdapter attendanceAdapter;
     String Username;
     FirebaseAuth firebaseAuth;
 
@@ -57,13 +57,18 @@ public class ViewAttendance extends AppCompatActivity
         getRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot ds:snapshot.getChildren())
+                if(snapshot.exists())
                 {
-                    DateAttendanceHelper data = ds.getValue(DateAttendanceHelper.class);
-                    getData.add(data);
+                    for(DataSnapshot ds:snapshot.getChildren())
+                    {
+
+                        DateAttendanceHelper data = new DateAttendanceHelper(ds.getKey());
+                        getData.add(data);
+                    }
+                    attendanceAdapter   = new ViewDateAttendanceAdapter(getData, getApplicationContext());
+                    recyclerView.setAdapter(attendanceAdapter);
                 }
-                ViewDateAttendanceAdapter  viewDateAttendanceAdapter = new ViewDateAttendanceAdapter(getData);
-                recyclerView.setAdapter(viewDateAttendanceAdapter);
+
             }
 
             @Override
@@ -74,17 +79,4 @@ public class ViewAttendance extends AppCompatActivity
 
     }
 
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-        adapter.stopListening();
-    }
 }

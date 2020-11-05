@@ -16,7 +16,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.Light.NoActionBar">
-        <activity android:name=".AdjustBalance"></activity>
+        <activity android:name=".PayRoll"></activity>
+        <activity android:name=".ViewAttendaceFilterDate" />
+        <activity android:name=".AdjustBalance" />
         <activity android:name=".ViewCashAdvance" />
         <activity android:name=".CashAdvance" />
         <activity android:name=".ViewEmployees" />

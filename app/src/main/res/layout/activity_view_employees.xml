@@ -13,6 +13,7 @@
         android:text="Employees"
         android:textSize="30sp"
         android:textStyle="bold"
+        android:textColor="#df7227"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"/>
 
