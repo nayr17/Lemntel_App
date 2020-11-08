@@ -198,4 +198,9 @@ public class MainMainActivity extends AppCompatActivity {
         Intent i = new Intent(MainMainActivity.this, ViewCashAdvance.class);
         startActivity(i);
     }
+
+    public void btnPayroll(View view) {
+        Intent i = new Intent(MainMainActivity.this, PayRoll.class);
+        startActivity(i);
+    }
 }

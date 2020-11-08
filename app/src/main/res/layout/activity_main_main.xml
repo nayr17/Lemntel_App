@@ -151,6 +151,7 @@
                 android:layout_height="80dp"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="2dp"
+                android:onClick="btnPayroll"
                 android:src="@drawable/ic_baseline_payment_24"/>
 
             <TextView
