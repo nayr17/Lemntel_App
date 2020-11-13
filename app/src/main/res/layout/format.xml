@@ -48,16 +48,8 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="Name:"
-                android:layout_margin="5dp"/>
-
-            <TextView
-                android:id="@+id/Date_Attendance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:text="Date:"
-                android:layout_margin="5dp"
-                android:layout_below="@+id/Name_Attendance"/>
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="5dp"/>
 
             <TextView
                 android:id="@+id/Time_Attendance"
@@ -65,8 +57,9 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="Time:"
-                android:layout_margin="5dp"
-                android:layout_below="@+id/Date_Attendance"/>
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_below="@+id/Name_Attendance"/>
 
 
         </RelativeLayout>

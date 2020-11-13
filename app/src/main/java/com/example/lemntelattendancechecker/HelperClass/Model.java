@@ -1,16 +1,17 @@
 package com.example.lemntelattendancechecker.HelperClass;
 
 public class Model {
-    String name, id, photoUrl;
+    String name, id, photoUrl, rate;
 
     public Model() {
 
     }
 
-    public Model(String name, String id, String photoUrl) {
+    public Model(String name, String id, String photoUrl, String rate) {
         this.name = name;
         this.id = id;
         this.photoUrl = photoUrl;
+        this.rate = rate;
     }
 
     public String getName() {
@@ -35,5 +36,13 @@ public class Model {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public String getRate() {
+        return rate;
+    }
+
+    public void setRate(String rate) {
+        this.rate = rate;
     }
 }

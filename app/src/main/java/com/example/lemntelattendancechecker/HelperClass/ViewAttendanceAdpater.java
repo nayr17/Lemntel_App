@@ -26,7 +26,6 @@ public class ViewAttendanceAdpater  extends FirebaseRecyclerAdapter<ScanActivity
     {
         holder.id.setText(model.getId());
         holder.name.setText("Name: " + model.getName());
-        holder.date.setText("Date: " + model.getDate());
         holder.time.setText("Time: " + model.getTime());
         Glide.with(holder.imageView.getContext()).load(model.getPhotoUrl()).into(holder.imageView);
 
@@ -54,7 +53,6 @@ public class ViewAttendanceAdpater  extends FirebaseRecyclerAdapter<ScanActivity
             imageView = itemView.findViewById(R.id.employeePhoto_Attendance);
             id = itemView.findViewById(R.id.employeeID_Attendance);
             name = itemView.findViewById(R.id.Name_Attendance);
-            date = itemView.findViewById(R.id.Date_Attendance);
             time = itemView.findViewById(R.id.Time_Attendance);
 
         }

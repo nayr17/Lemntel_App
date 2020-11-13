@@ -7,7 +7,7 @@
     app:cardCornerRadius="12dp"
     android:elevation="5dp"
     android:layout_margin="5dp"
-    android:id="@+id/cardView">
+    android:id="@+id/cardViewEmploy">
 
     <LinearLayout
         android:padding="10dp"
@@ -52,8 +52,26 @@
                 android:text="Name: "
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="15dp"/>
+                android:layout_marginBottom="10dp"/>
 
+            <TextView
+                android:id="@+id/rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="Daily rate: "
+                android:layout_below="@id/Name"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"/>
+
+
+            <ImageButton
+                android:id="@+id/btnRate"
+                android:layout_below="@+id/rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_baseline_attach_money_24"/>
 
 
         </RelativeLayout>

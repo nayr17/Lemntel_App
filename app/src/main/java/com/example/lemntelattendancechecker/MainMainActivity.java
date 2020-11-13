@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,11 +40,17 @@ public class MainMainActivity extends AppCompatActivity {
 
     TextView adminDisplay;
     TextView date;
+    ImageButton btnPayroll;
     FirebaseAuth firebaseAuth;
     String adminUsername;
 
     String scannedResult;
     String currentAdmin;
+
+    int prevCount;
+    int newCount;
+    String finalCount;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +69,11 @@ public class MainMainActivity extends AppCompatActivity {
 
         date = findViewById(R.id.dateToday);
         date.setText("DATE: " + dateToday);
+
+        btnPayroll = findViewById(R.id.payroll);
+
+
+
     }
 
 
@@ -119,9 +132,34 @@ public class MainMainActivity extends AppCompatActivity {
 
     }
 
+    public void count(){
+
+        DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count/" + scannedResult);
+        countAttendance.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    prevCount = Integer.parseInt(snapshot.getValue().toString());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        newCount = prevCount + 1;
+        finalCount = Integer.toString(newCount);
+
+    }
+
     public void getRefScan()
     {
 
+        count();
 
         Date TodayChildName = new Date();
         SimpleDateFormat format2 = new SimpleDateFormat("MMM d yyyy (EEEE)");
@@ -131,17 +169,22 @@ public class MainMainActivity extends AppCompatActivity {
 
 //        Toast.makeText(this, childName, Toast.LENGTH_LONG).show();
 
-        Date today = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
-        final String date = format.format(today);
-
-        Date today1 = new Date();
-        SimpleDateFormat format1 = new SimpleDateFormat("EEEE");
-        String addformat = format1.format(today1);
-
-       final String final_date = date + " (" + addformat + ")";
+//        Date today = new Date();
+//        SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+//        final String date = format.format(today);
+//
+//        Date today1 = new Date();
+//        SimpleDateFormat format1 = new SimpleDateFormat("EEEE");
+//        String addformat = format1.format(today1);
+//
+//       final String final_date = date + " (" + addformat + ")";
 
         final String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
+
+
+
+
+
 
         DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + scannedResult);
         getRef.addValueEventListener(new ValueEventListener() {
@@ -153,13 +196,37 @@ public class MainMainActivity extends AppCompatActivity {
                     String photoUrl = snapshot.child("photoUrl").getValue().toString().trim();
 
                     final DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Employee_Attendance");
-                    ScanActivityGetResult scanActivityGetResult = new ScanActivityGetResult(id, name, photoUrl, final_date, currentTime);
+                    ScanActivityGetResult scanActivityGetResult = new ScanActivityGetResult(id, name, photoUrl, currentTime);
                     uploadRef.child(childName).push().setValue(scanActivityGetResult)
                           .addOnCompleteListener(new OnCompleteListener<Void>() {
                               @Override
                               public void onComplete(@NonNull Task<Void> task) {
                                   if(task.isSuccessful())
                                   {
+
+
+                                      final DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count/" + scannedResult);
+                                      countAttendance.addValueEventListener(new ValueEventListener() {
+                                          @Override
+                                          public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                              if(snapshot.exists())
+                                              {
+                                                  countAttendance.setValue(finalCount);
+                                              }
+                                              else
+                                              {
+                                                  countAttendance.setValue(1);
+                                              }
+
+                                          }
+
+                                          @Override
+                                          public void onCancelled(@NonNull DatabaseError error) {
+
+                                          }
+                                      });
+
+
                                       Toast.makeText(MainMainActivity.this, "'" + name + "'" + " has time in", Toast.LENGTH_LONG).show();
                                   }
                                   else
@@ -200,7 +267,20 @@ public class MainMainActivity extends AppCompatActivity {
     }
 
     public void btnPayroll(View view) {
-        Intent i = new Intent(MainMainActivity.this, PayRoll.class);
-        startActivity(i);
+        Date today1 = new Date();
+        SimpleDateFormat format1 = new SimpleDateFormat("EEEE");
+        String date = format1.format(today1);
+        Toast.makeText(MainMainActivity.this, date,Toast.LENGTH_LONG).show();
+
+        if(!date.equals("Friday"))
+        {
+            Toast.makeText(MainMainActivity.this, "Payroll is only available on Friday!",Toast.LENGTH_LONG).show();
+        }
+        if(date .equals("Friday"))
+        {
+            Intent i = new Intent(MainMainActivity.this, PayRoll.class);
+            startActivity(i);
+        }
+
     }
 }

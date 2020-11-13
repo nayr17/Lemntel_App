@@ -2,16 +2,15 @@ package com.example.lemntelattendancechecker.HelperClass;
 
 public class ScanActivityGetResult {
 
-    String id, name, photoUrl, date, time;
+    String id, name, photoUrl, time;
 
     public ScanActivityGetResult() {
     }
 
-    public ScanActivityGetResult(String id, String name, String photoUrl, String date, String time) {
+    public ScanActivityGetResult(String id, String name, String photoUrl, String time) {
         this.id = id;
         this.name = name;
         this.photoUrl = photoUrl;
-        this.date = date;
         this.time = time;
     }
 
@@ -37,14 +36,6 @@ public class ScanActivityGetResult {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public String getTime() {

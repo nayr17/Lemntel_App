@@ -37,7 +37,7 @@ public class ViewEmployees extends AppCompatActivity {
                 .setQuery(FirebaseDatabase.getInstance().getReference("Employees"),Model.class)
                 .build();
 
-        adapter = new Adapter(options);
+        adapter = new Adapter(options, getApplicationContext());
         recyclerView.setAdapter(adapter);
 
     }
