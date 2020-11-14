@@ -96,20 +96,13 @@ public class AdjustBalance extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Toast.makeText(AdjustBalance.this, "balance has been updated", Toast.LENGTH_SHORT).show();
-                                Intent i = new Intent(AdjustBalance.this, MainMainActivity.class);
                                 finish();
-                                startActivity(i);
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(AdjustBalance.this, "error on updating balance", Toast.LENGTH_SHORT).show();
                                 Intent i = new Intent(AdjustBalance.this, MainMainActivity.class);
-                                finish();
                                 startActivity(i);
+
                             }
                         });
+
                     }
                 }
 

@@ -15,11 +15,25 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.lemntelattendancechecker.MainMainActivity;
 import com.example.lemntelattendancechecker.R;
 import com.example.lemntelattendancechecker.SelectEmployee;
+import com.example.lemntelattendancechecker.ViewEmployees;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -28,6 +42,11 @@ public class Adapter extends FirebaseRecyclerAdapter<Model, Adapter.show_data>
     Context context;
     String check;
 
+    int prevCount = 0;
+    int newCount = 0;
+    String finalCount;
+    String ID;
+
 
     public Adapter(@NonNull FirebaseRecyclerOptions<Model> options, Context context) {
         super(options);
@@ -35,35 +54,143 @@ public class Adapter extends FirebaseRecyclerAdapter<Model, Adapter.show_data>
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull show_data holder, final int position, @NonNull Model model)
+    protected void onBindViewHolder(@NonNull show_data holder, final int position, @NonNull final Model model)
     {
        holder.id.setText(model.getId());
        holder.name.setText("Name: " + model.getName());
+
+
 
        check = model.getRate();
        if(check == null)
        {
            holder.rate.setVisibility(View.INVISIBLE);
-           holder.btnRate.setVisibility(View.VISIBLE);
        }
        if(check != null)
        {
            holder.rate.setVisibility(View.VISIBLE);
-           holder.btnRate.setVisibility(View.INVISIBLE);
-           holder.rate.setText("Daily Rate: " + model.getRate());
+           holder.rate.setText("Daily rate: " + model.getRate());
        }
        Glide.with(holder.imageView.getContext()).load(model.getPhotoUrl()).into(holder.imageView);
 
-       holder.cardView.setOnClickListener(new View.OnClickListener() {
+//       holder.cardView.setOnClickListener(new View.OnClickListener() {
+//           @Override
+//           public void onClick(View v) {
+//               Intent i = new Intent(context, SelectEmployee.class);
+//               i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//               context.startActivity(i);
+//
+//
+//           }
+//       });
+
+       holder.btnRate.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
+
                Intent i = new Intent(context, SelectEmployee.class);
+               i.putExtra("ID", model.getId());
                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                context.startActivity(i);
+
+           }
+       });
+
+       holder.btnPresent.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+
+                ID = model.getId();
+                count();
+
+               Date TodayChildName = new Date();
+               SimpleDateFormat format2 = new SimpleDateFormat("MMM d yyyy (EEEE)");
+               final String childName = format2.format(TodayChildName);
+
+               final String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
+
+               DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + ID);
+               getRef.addValueEventListener(new ValueEventListener() {
+                   @Override
+                   public void onDataChange(@NonNull DataSnapshot snapshot) {
+                       if(snapshot.exists()){
+                           final String id = snapshot.child("id").getValue().toString().trim();
+                           final String name = snapshot.child("name").getValue().toString().trim();
+                           String photoUrl = snapshot.child("photoUrl").getValue().toString().trim();
+
+                           final DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Employee_Attendance");
+                           ScanActivityGetResult scanActivityGetResult = new ScanActivityGetResult(id, name, photoUrl, currentTime);
+                           uploadRef.child(childName).push().setValue(scanActivityGetResult)
+                                   .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                       @Override
+                                       public void onComplete(@NonNull Task<Void> task) {
+                                           if(task.isSuccessful())
+                                           {
+
+
+                                               final DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count/" + ID);
+                                               countAttendance.addValueEventListener(new ValueEventListener() {
+                                                   @Override
+                                                   public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                       if(snapshot.exists())
+                                                       {
+
+                                                           countAttendance.setValue(finalCount)
+                                                           .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                               @Override
+                                                               public void onSuccess(Void aVoid) {
+                                                                   Toast.makeText(context, "'" + name + "'" + " has time in", Toast.LENGTH_SHORT).show();
+                                                               }
+                                                           });
+
+
+                                                       }
+                                                       else
+                                                       {
+                                                           countAttendance.setValue("1")
+                                                           .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                               @Override
+                                                               public void onSuccess(Void aVoid) {
+                                                                   Toast.makeText(context, "'" + name + "'" + " has time indfsdfsdf", Toast.LENGTH_SHORT).show();
+                                                               }
+                                                           });
+                                                       }
+
+                                                   }
+
+                                                   @Override
+                                                   public void onCancelled(@NonNull DatabaseError error) {
+
+                                                   }
+                                               });
+
+
+
+                                           }
+                                           else
+                                           {
+                                               Toast.makeText(context,"Employee has not been registered", Toast.LENGTH_SHORT).show();
+                                           }
+                                       }
+                                   });
+
+
+
+
+                       }
+                   }
+
+                   @Override
+                   public void onCancelled(@NonNull DatabaseError error) {
+
+                   }
+               });
 
 
            }
        });
+
+
 
     }
 
@@ -82,7 +209,7 @@ public class Adapter extends FirebaseRecyclerAdapter<Model, Adapter.show_data>
         CircleImageView imageView;
         CardView cardView;
         TextView id, name, rate;
-        ImageButton btnRate;
+        ImageButton btnRate, btnPresent;
 
         public show_data(@NonNull View itemView)
         {
@@ -93,9 +220,36 @@ public class Adapter extends FirebaseRecyclerAdapter<Model, Adapter.show_data>
             name = itemView.findViewById(R.id.Name);
             rate = itemView.findViewById(R.id.rate);
             btnRate = itemView.findViewById(R.id.btnRate);
+            btnPresent = itemView.findViewById(R.id.btnPresent);
             cardView = itemView.findViewById(R.id.cardViewEmploy);
 
         }
+    }
+
+    public void count(){
+        DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count/" + ID);
+        countAttendance.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    prevCount = Integer.parseInt(snapshot.getValue().toString());
+
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        newCount = prevCount + 1;
+        finalCount = Integer.toString(newCount);
+
+
+
     }
 
 
