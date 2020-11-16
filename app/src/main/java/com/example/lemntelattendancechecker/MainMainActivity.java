@@ -74,6 +74,8 @@ public class MainMainActivity extends AppCompatActivity {
 
 
 
+
+
     }
 
 
@@ -118,7 +120,10 @@ public class MainMainActivity extends AppCompatActivity {
             if(result.getContents() != null)
             {
                 scannedResult = result.getContents().trim();
+
                 getRefScan();
+
+
             }
             else
             {
@@ -134,13 +139,20 @@ public class MainMainActivity extends AppCompatActivity {
 
     public void count(){
 
-        DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count/" + scannedResult);
-        countAttendance.addValueEventListener(new ValueEventListener() {
+        final DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count");
+        countAttendance.child(scannedResult).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists())
                 {
-                    prevCount = Integer.parseInt(snapshot.getValue().toString());
+                    prevCount = Integer.parseInt(snapshot.child(scannedResult).getValue().toString());
+                    Toast.makeText(MainMainActivity.this, "exist", Toast.LENGTH_LONG).show();
+
+                }
+                else
+                {
+                  prevCount = 1;
+                    Toast.makeText(MainMainActivity.this, "not exist", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -151,15 +163,25 @@ public class MainMainActivity extends AppCompatActivity {
             }
         });
 
-        newCount = prevCount + 1;
-        finalCount = Integer.toString(newCount);
 
     }
 
     public void getRefScan()
     {
-
         count();
+
+        if(prevCount != 0)
+        {
+            newCount = prevCount + 1;
+            DatabaseReference upload = FirebaseDatabase.getInstance().getReference("Attendance_Count");
+            upload.child(scannedResult).setValue(newCount);
+        }
+
+        if(prevCount == 1)
+        {
+            DatabaseReference upload = FirebaseDatabase.getInstance().getReference("Attendance_Count");
+            upload.child(scannedResult).setValue(prevCount);
+        }
 
         Date TodayChildName = new Date();
         SimpleDateFormat format2 = new SimpleDateFormat("MMM d yyyy (EEEE)");
@@ -182,10 +204,6 @@ public class MainMainActivity extends AppCompatActivity {
         final String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
 
 
-
-
-
-
         DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + scannedResult);
         getRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -203,30 +221,6 @@ public class MainMainActivity extends AppCompatActivity {
                               public void onComplete(@NonNull Task<Void> task) {
                                   if(task.isSuccessful())
                                   {
-
-
-                                      final DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count/" + scannedResult);
-                                      countAttendance.addValueEventListener(new ValueEventListener() {
-                                          @Override
-                                          public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                              if(snapshot.exists())
-                                              {
-                                                  countAttendance.setValue(finalCount);
-                                              }
-                                              else
-                                              {
-                                                  countAttendance.setValue(1);
-                                              }
-
-                                          }
-
-                                          @Override
-                                          public void onCancelled(@NonNull DatabaseError error) {
-
-                                          }
-                                      });
-
-
                                       Toast.makeText(MainMainActivity.this, "'" + name + "'" + " has time in", Toast.LENGTH_LONG).show();
                                   }
                                   else

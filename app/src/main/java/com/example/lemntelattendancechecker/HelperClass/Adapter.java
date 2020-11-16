@@ -42,10 +42,16 @@ public class Adapter extends FirebaseRecyclerAdapter<Model, Adapter.show_data>
     Context context;
     String check;
 
-    int prevCount = 0;
-    int newCount = 0;
-    String finalCount;
+
     String ID;
+
+    int prevCount;
+    int newCount;
+    String finalCount;
+    String name ;
+    String getCount;
+
+
 
 
     public Adapter(@NonNull FirebaseRecyclerOptions<Model> options, Context context) {
@@ -96,99 +102,75 @@ public class Adapter extends FirebaseRecyclerAdapter<Model, Adapter.show_data>
            }
        });
 
-       holder.btnPresent.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-
-                ID = model.getId();
-                count();
-
-               Date TodayChildName = new Date();
-               SimpleDateFormat format2 = new SimpleDateFormat("MMM d yyyy (EEEE)");
-               final String childName = format2.format(TodayChildName);
-
-               final String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
-
-               DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + ID);
-               getRef.addValueEventListener(new ValueEventListener() {
-                   @Override
-                   public void onDataChange(@NonNull DataSnapshot snapshot) {
-                       if(snapshot.exists()){
-                           final String id = snapshot.child("id").getValue().toString().trim();
-                           final String name = snapshot.child("name").getValue().toString().trim();
-                           String photoUrl = snapshot.child("photoUrl").getValue().toString().trim();
-
-                           final DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Employee_Attendance");
-                           ScanActivityGetResult scanActivityGetResult = new ScanActivityGetResult(id, name, photoUrl, currentTime);
-                           uploadRef.child(childName).push().setValue(scanActivityGetResult)
-                                   .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                       @Override
-                                       public void onComplete(@NonNull Task<Void> task) {
-                                           if(task.isSuccessful())
-                                           {
-
-
-                                               final DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count/" + ID);
-                                               countAttendance.addValueEventListener(new ValueEventListener() {
-                                                   @Override
-                                                   public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                       if(snapshot.exists())
-                                                       {
-
-                                                           countAttendance.setValue(finalCount)
-                                                           .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                               @Override
-                                                               public void onSuccess(Void aVoid) {
-                                                                   Toast.makeText(context, "'" + name + "'" + " has time in", Toast.LENGTH_SHORT).show();
-                                                               }
-                                                           });
-
-
-                                                       }
-                                                       else
-                                                       {
-                                                           countAttendance.setValue("1")
-                                                           .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                               @Override
-                                                               public void onSuccess(Void aVoid) {
-                                                                   Toast.makeText(context, "'" + name + "'" + " has time indfsdfsdf", Toast.LENGTH_SHORT).show();
-                                                               }
-                                                           });
-                                                       }
-
-                                                   }
-
-                                                   @Override
-                                                   public void onCancelled(@NonNull DatabaseError error) {
-
-                                                   }
-                                               });
-
-
-
-                                           }
-                                           else
-                                           {
-                                               Toast.makeText(context,"Employee has not been registered", Toast.LENGTH_SHORT).show();
-                                           }
-                                       }
-                                   });
-
-
-
-
-                       }
-                   }
-
-                   @Override
-                   public void onCancelled(@NonNull DatabaseError error) {
-
-                   }
-               });
-
-
-           }
-       });
+//       holder.btnPresent.setOnClickListener(new View.OnClickListener() {
+//           @Override
+//           public void onClick(View v) {
+//
+//               ID = model.getId();
+//               name = model.getName();
+//               count();
+//
+//               if(getCount != null)
+//               {
+//                   newCount = prevCount + 1;
+//                   finalCount = Integer.toString(newCount);
+//
+//                   DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count");
+//                   countAttendance.child(ID).setValue(finalCount);
+//               }
+//               if(getCount == null)
+//               {
+//                   DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count");
+//                   countAttendance.child(ID).setValue(finalCount);
+//               }
+//
+//               Date TodayChildName = new Date();
+//               SimpleDateFormat format2 = new SimpleDateFormat("MMM d yyyy (EEEE)");
+//               final String childName = format2.format(TodayChildName);
+//
+//               final String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
+//
+//               DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + ID);
+//               getRef.addValueEventListener(new ValueEventListener() {
+//                   @Override
+//                   public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                       if(snapshot.exists()){
+//                           final String id = snapshot.child("id").getValue().toString().trim();
+//                           final String name = snapshot.child("name").getValue().toString().trim();
+//                           String photoUrl = snapshot.child("photoUrl").getValue().toString().trim();
+//
+//                           final DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Employee_Attendance");
+//                           ScanActivityGetResult scanActivityGetResult = new ScanActivityGetResult(id, name, photoUrl, currentTime);
+//                           uploadRef.child(childName).push().setValue(scanActivityGetResult)
+//                                   .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                       @Override
+//                                       public void onComplete(@NonNull Task<Void> task) {
+//                                           if(task.isSuccessful())
+//                                           {
+//                                               Toast.makeText(context, "'" + name + "'" + " has time ", Toast.LENGTH_SHORT).show();
+//                                           }
+//                                           else
+//                                           {
+//                                               Toast.makeText(context,"Employee has not been registered", Toast.LENGTH_SHORT).show();
+//                                           }
+//                                       }
+//                                   });
+//
+//
+//
+//
+//                       }
+//                   }
+//
+//                   @Override
+//                   public void onCancelled(@NonNull DatabaseError error) {
+//
+//                   }
+//               });
+//
+//
+//           }
+//       });
 
 
 
@@ -227,16 +209,32 @@ public class Adapter extends FirebaseRecyclerAdapter<Model, Adapter.show_data>
     }
 
     public void count(){
-        DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count/" + ID);
-        countAttendance.addValueEventListener(new ValueEventListener() {
+
+
+        final DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count");
+        countAttendance.child(ID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                    prevCount = Integer.parseInt(snapshot.getValue().toString());
-
+                Toast.makeText(context, ID, Toast.LENGTH_SHORT).show();
 
 
 
+                if(snapshot.exists())
+                {
+                    finalCount = Integer.toString(0);
+                    prevCount = 0;
+                    newCount = 0;
+                    getCount = snapshot.getValue().toString();
+                    Toast.makeText(context, getCount, Toast.LENGTH_SHORT).show();
+                    prevCount = Integer.parseInt(getCount);
+                }
+                else
+                {
+                    finalCount = Integer.toString(1);
+                    prevCount = 0;
+                    newCount = 0;
+                    getCount = null;
+                }
             }
 
             @Override
@@ -244,11 +242,6 @@ public class Adapter extends FirebaseRecyclerAdapter<Model, Adapter.show_data>
 
             }
         });
-
-        newCount = prevCount + 1;
-        finalCount = Integer.toString(newCount);
-
-
 
     }
 
