@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.lemntelattendancechecker.HelperClass.CountHelper;
 import com.example.lemntelattendancechecker.HelperClass.ScanActivityGetResult;
 import com.example.lemntelattendancechecker.HelperClass.childNameHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.net.Inet4Address;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,6 +43,7 @@ public class MainMainActivity extends AppCompatActivity {
 
     TextView adminDisplay;
     TextView date;
+    TextView count;
     ImageButton btnPayroll;
     FirebaseAuth firebaseAuth;
     String adminUsername;
@@ -72,8 +76,7 @@ public class MainMainActivity extends AppCompatActivity {
 
         btnPayroll = findViewById(R.id.payroll);
 
-
-
+        count = findViewById(R.id.count);
 
 
     }
@@ -120,10 +123,7 @@ public class MainMainActivity extends AppCompatActivity {
             if(result.getContents() != null)
             {
                 scannedResult = result.getContents().trim();
-
                 getRefScan();
-
-
             }
             else
             {
@@ -137,55 +137,63 @@ public class MainMainActivity extends AppCompatActivity {
 
     }
 
-    public void count(){
+    public void getRefScan()
+    {
 
-        final DatabaseReference countAttendance = FirebaseDatabase.getInstance().getReference("Attendance_Count");
-        countAttendance.child(scannedResult).addValueEventListener(new ValueEventListener() {
+        DatabaseReference Ref = FirebaseDatabase.getInstance().getReference("Attendance_Count/" + scannedResult);
+        Ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists())
                 {
-                    prevCount = Integer.parseInt(snapshot.child(scannedResult).getValue().toString());
-                    Toast.makeText(MainMainActivity.this, "exist", Toast.LENGTH_LONG).show();
-
-                }
-                else
-                {
-                  prevCount = 1;
-                    Toast.makeText(MainMainActivity.this, "not exist", Toast.LENGTH_LONG).show();
+                    String get = snapshot.child("count").getValue().toString();
+                    Toast.makeText(MainMainActivity.this, get , Toast.LENGTH_SHORT).show();
+                  count.setText(get);
                 }
 
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
+        String get = count.getText().toString();
+//        prevCount = Integer.parseInt(get);
+//        if(prevCount == 0)
+//        {
+//            finalCount = Integer.toString(1);
+//            DatabaseReference upload = FirebaseDatabase.getInstance().getReference("Attendance_Count");
+//            CountHelper countHelper = new CountHelper(finalCount);
+//            upload.child(scannedResult).setValue(countHelper)
+//                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                        @Override
+//                        public void onSuccess(Void aVoid) {
+//                            prevCount = 0;
+//                        }
+//                    });
+//        }
+//        if(prevCount != 0)
+//        {
+//            newCount = prevCount + 1;
+//            finalCount = Integer.toString(newCount);
+//
+//            DatabaseReference upload = FirebaseDatabase.getInstance().getReference("Attendance_Count");
+//            CountHelper countHelper = new CountHelper(finalCount);
+//            upload.child(scannedResult).setValue(countHelper)
+//                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                        @Override
+//                        public void onSuccess(Void aVoid) {
+//                                prevCount = 0;
+//                        }
+//                    });
+//        }
 
 
-    }
-
-    public void getRefScan()
-    {
-        count();
-
-        if(prevCount != 0)
-        {
-            newCount = prevCount + 1;
-            DatabaseReference upload = FirebaseDatabase.getInstance().getReference("Attendance_Count");
-            upload.child(scannedResult).setValue(newCount);
-        }
-
-        if(prevCount == 1)
-        {
-            DatabaseReference upload = FirebaseDatabase.getInstance().getReference("Attendance_Count");
-            upload.child(scannedResult).setValue(prevCount);
-        }
-
-        Date TodayChildName = new Date();
-        SimpleDateFormat format2 = new SimpleDateFormat("MMM d yyyy (EEEE)");
-        final String childName = format2.format(TodayChildName);
+            Date TodayChildName = new Date();
+            SimpleDateFormat format2 = new SimpleDateFormat("MMM d yyyy (EEEE)");
+            final String childName = format2.format(TodayChildName);
 //        final String ChildName = " ' " + childName + " ' ";
 
 
@@ -201,46 +209,44 @@ public class MainMainActivity extends AppCompatActivity {
 //
 //       final String final_date = date + " (" + addformat + ")";
 
-        final String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
+            final String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
 
 
-        DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + scannedResult);
-        getRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    final String id = snapshot.child("id").getValue().toString().trim();
-                    final String name = snapshot.child("name").getValue().toString().trim();
-                    String photoUrl = snapshot.child("photoUrl").getValue().toString().trim();
+            DatabaseReference getRef = FirebaseDatabase.getInstance().getReference("Employees/" + scannedResult);
+            getRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()){
+                        final String id = snapshot.child("id").getValue().toString().trim();
+                        final String name = snapshot.child("name").getValue().toString().trim();
+                        String photoUrl = snapshot.child("photoUrl").getValue().toString().trim();
 
-                    final DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Employee_Attendance");
-                    ScanActivityGetResult scanActivityGetResult = new ScanActivityGetResult(id, name, photoUrl, currentTime);
-                    uploadRef.child(childName).push().setValue(scanActivityGetResult)
-                          .addOnCompleteListener(new OnCompleteListener<Void>() {
-                              @Override
-                              public void onComplete(@NonNull Task<Void> task) {
-                                  if(task.isSuccessful())
-                                  {
-                                      Toast.makeText(MainMainActivity.this, "'" + name + "'" + " has time in", Toast.LENGTH_LONG).show();
-                                  }
-                                  else
-                                  {
-                                      Toast.makeText(MainMainActivity.this,"Employee has not been registered", Toast.LENGTH_SHORT).show();
-                                  }
-                              }
-                          });
+                        final DatabaseReference uploadRef = FirebaseDatabase.getInstance().getReference("Employee_Attendance");
+                        ScanActivityGetResult scanActivityGetResult = new ScanActivityGetResult(id, name, photoUrl, currentTime);
+                        uploadRef.child(childName).push().setValue(scanActivityGetResult)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful())
+                                        {
+                                            Toast.makeText(MainMainActivity.this, "'" + name + "'" + " has time in", Toast.LENGTH_LONG).show();
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(MainMainActivity.this,"Employee has not been registered", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
 
+                    }
+                }
 
-
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
                 }
-            }
+            });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
 
 
     }
